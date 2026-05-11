@@ -51,4 +51,9 @@ with gr.Blocks(css=custom_css) as demo:
     btn.click(generate_audio, [inp, sec, mode], out)
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860, share=False)
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        share=False,
+        show_api=False  # ОВА Е КЛУЧНО: Исклучува генерирање на API документација
+    )
