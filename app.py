@@ -1,9 +1,13 @@
 import gradio as gr
 
-def greet(name):
-    return "LATIVM Test: Hello " + name
+def test_func(text):
+    return f"LATIVM Online: {text}"
 
-demo = gr.Interface(fn=greet, inputs="text", outputs="text")
+with gr.Blocks() as demo:
+    gr.Markdown("# LATIVM System Check")
+    inp = gr.Textbox(placeholder="Системот се подигнува...")
+    out = gr.Textbox()
+    btn = gr.Button("Тест")
+    btn.click(test_func, inp, out)
 
-if __name__ == "__main__":
-    demo.launch()
+demo.launch()
