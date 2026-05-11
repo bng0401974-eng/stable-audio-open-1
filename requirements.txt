@@ -1,4 +1,8 @@
-gradio
-numpy
-pydub
 torch
+torchaudio
+diffusers
+transformers
+accelerate
+gradio
+pydub
+numpy
