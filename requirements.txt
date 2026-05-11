@@ -1,12 +1,3 @@
-torch
-diffusers
-transformers
-accelerate
-scipy
-numpy
 gradio
-spaces
-audioop-lts
+numpy
 pydub
-
-# додај ги и специфичните за аудио (на пр. audiocraft, torch) ако ги користиш
