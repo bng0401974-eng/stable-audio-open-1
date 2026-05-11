@@ -1,5 +1,4 @@
 audioop-lts
-gradio==5.0.0
 huggingface_hub==0.24.0
 diffusers==0.30.0
 transformers
