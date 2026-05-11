@@ -18,8 +18,8 @@ def load_model():
 
         print("--- Вчитувам модел (Lazy Loading) ---")
 
-        # Го вчитуваме моделот директно во соодветниот формат
-        # Не користиме .to("cuda") тука, spaces.GPU ќе го реши тоа подоцна
+        # Го вчитуваме моделот во half-precision (float16) за штедење меморија
+        # НЕ користиме .to("cuda") тука!
         pipe = StableAudioPipeline.from_pretrained(
             model_id,
             torch_dtype=torch.float16,
@@ -31,11 +31,11 @@ def load_model():
 
 @spaces.GPU(duration=120)
 def generate_audio(prompt, seconds=10):
-    # Повикување на моделот
+    # Повикување на моделот преку функцијата за вчитување
     model = load_model()
 
-    # КЛУЧНО: Кај ZeroGPU НЕ користиме model.to("cuda")
-    # Декораторот @spaces.GPU автоматски го префрла моделот на графичка
+    # ВНИМАНИЕ: Избришана е линијата model.to("cuda")
+    # @spaces.GPU декораторот сам го прави тоа автоматски
 
     print(f"--- Започнувам генерирање: {prompt} ---")
 
@@ -62,7 +62,7 @@ def generate_audio(prompt, seconds=10):
         return None
 
 
-# Интерфејс (Gradio)
+# Интерфејс (Gradio) со пурпурна тема
 with gr.Blocks(theme=gr.themes.Default(primary_hue="purple")) as demo:
     gr.Markdown("# 🎵 LATIVM AI Audio Engine")
     gr.Markdown("Внесете опис и почекајте моделот да се активира на GPU.")
@@ -85,6 +85,6 @@ with gr.Blocks(theme=gr.themes.Default(primary_hue="purple")) as demo:
         outputs=out
     )
 
-# Стартување
+# Стартување на апликацијата
 if __name__ == "__main__":
     demo.launch()
