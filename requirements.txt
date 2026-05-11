@@ -1,10 +1,10 @@
-build error
-Job failed with exit code: 1. Reason: cache miss: [run 1/2] LINK COPY --link ./ /app
-cache miss: [run 2/2] LINK COPY --from=pipfreeze --link /pipfreeze/ /pipfreeze/
-cache miss: [pipfreeze 2/2] RUN pip freeze > /pipfreeze/freeze.txt
-cache miss: [run 1/2] COPY --link ./ /app
-cache miss: [base 6/6] RUN mkdir -p /home/user && ( [ -e /home/user/app ] || ln -s /app/ /home/user/app ) || true
-cache miss: [base 5/6] RUN --mount=target=/tmp/requirements.txt,source=requirements.txt     pip install --no-cache-dir -r /tmp/requirements.txt     gradio[oauth]==4.44.1     "uvicorn>=0.14.0" "websockets>=10.4"     spaces
-cache miss: [pipfreeze 1/2] RUN mkdir -p /pipfreeze
-cache miss: [run 2/2] COPY --from=pipfreeze --link /pipfreeze/ /pipfreeze/
-{"total":24,"completed":18,"user_total":13,"user_cached":4,"user_completed":7,"user_cacheable":12,"from":1,"miss":8,"client_duration_ms":10416}
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.1.2+cpu
+torchaudio==2.1.2+cpu
+diffusers==0.26.3
+transformers==4.38.2
+accelerate==0.27.2
+gradio==4.44.1
+pydub
+audioop-lts
+scipy
