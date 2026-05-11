@@ -1,7 +1,8 @@
+torch
 diffusers
 transformers
 accelerate
-spaces
 scipy
 numpy
-torchsde
+gradio
+spaces
