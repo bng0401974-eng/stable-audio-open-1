@@ -4,3 +4,4 @@ accelerate
 spaces
 scipy
 numpy
+torchsde
