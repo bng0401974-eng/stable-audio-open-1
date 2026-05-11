@@ -10,15 +10,15 @@ WORKDIR /app
 
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
-# 1. Инсталирај CPU верзии на torch
+# 1. CPU верзии на torch
 RUN pip install --no-cache-dir torch torchaudio --index-url https://download.pytorch.org/whl/cpu
 
 # 2. Инсталирај ги останатите
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 3. КРИТИЧНО: Верзии кои имаат handle_file, но сепак работат со старата hub библиотека
-RUN pip install --no-cache-dir --force-reinstall huggingface_hub==0.23.2 gradio_client==1.3.0
+# 3. КРИТИЧНО: Верзија 0.24.0 е компатибилна со сите страни
+RUN pip install --no-cache-dir --force-reinstall huggingface_hub==0.24.0 gradio_client==1.3.0
 
 COPY . .
 
