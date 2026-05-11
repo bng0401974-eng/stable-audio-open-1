@@ -1,5 +1,8 @@
 audioop-lts
-gradio==4.44.1
-numpy
+gradio==5.0.0
+huggingface_hub==0.24.0
+diffusers==0.30.0
+transformers
+accelerate
 pydub
 scipy
