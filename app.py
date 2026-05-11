@@ -111,4 +111,10 @@ with gr.Blocks(css=custom_css, theme=gr.themes.Default()) as demo:
 
 # КРИТИЧНО ЗА DOCKER: server_name мора да е 0.0.0.0 и порта 7860
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+    # Додадовме show_error=True и ги тргнавме share параметрите
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        share=False,
+        show_error=True
+    )
