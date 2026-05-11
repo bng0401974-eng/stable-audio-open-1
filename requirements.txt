@@ -6,3 +6,4 @@ accelerate
 gradio
 pydub
 numpy
+audioop-lts

@@ -1,97 +1,105 @@
-import os
-import torch
-import spaces
-from diffusers import StableAudioPipeline
-import scipy.io.wavfile as wavfile
-import numpy as np
 import sys
+import os
+
+# 1. Хак за Python 3.13 компатибилност со pydub
 try:
     import audioop
 except ImportError:
-    import audioop_lts as audioop
-    sys.modules["audioop"] = audioop
+    try:
+        import audioop_lts as audioop
+
+        sys.modules["audioop"] = audioop
+    except ImportError:
+        pass
 
 import gradio as gr
+import torch
+from diffusers import StableAudioPipeline
+import scipy.io.wavfile
 
-# Глобална променлива за моделот
-pipe = None
-
-
-def load_model():
-    global pipe
-    if pipe is None:
-        model_id = "stabilityai/stable-audio-open-1.0"
-        hf_token = os.getenv("HF_TOKEN")
-
-        print("--- Вчитувам модел (Lazy Loading) ---")
-
-        # Го вчитуваме моделот во half-precision (float16) за штедење меморија
-        # НЕ користиме .to("cuda") тука!
-        pipe = StableAudioPipeline.from_pretrained(
-            model_id,
-            torch_dtype=torch.float16,
-            token=hf_token,
-            low_cpu_mem_usage=True
-        )
-    return pipe
+# 2. Вчитување на моделот (Stable Audio Open 1.0)
+# Користиме float32 за CPU бидејќи float16 често не е поддржан на сите CPU сервери
+print("Вчитување на LATIVM Engine...")
+pipe = StableAudioPipeline.from_pretrained(
+    "stabilityai/stable-audio-open-1.0",
+    torch_dtype=torch.float32
+)
+pipe.to("cpu")
 
 
-@spaces.GPU(duration=120)
-def generate_audio(prompt, seconds=10):
-    # Повикување на моделот преку функцијата за вчитување
-    model = load_model()
-
-    # ВНИМАНИЕ: Избришана е линијата model.to("cuda")
-    # @spaces.GPU декораторот сам го прави тоа автоматски
-
-    print(f"--- Започнувам генерирање: {prompt} ---")
-
-    try:
-        # Генерирање на аудиото
-        output = model(
-            prompt,
-            num_inference_steps=200,
-            audio_end_in_s=float(seconds)
-        ).audios[0]
-
-        # Конверзија во формат погоден за WAV фајл
-        audio_np = output.T.cpu().numpy()
-        audio_int16 = (audio_np * 32767).astype(np.int16)
-
-        output_path = "output.wav"
-        wavfile.write(output_path, 44100, audio_int16)
-
-        print("--- Успешно генерирано аудио! ---")
-        return output_path
-
-    except Exception as e:
-        print(f"Грешка при генерирање: {e}")
+def generate_audio(prompt, seconds):
+    if not prompt:
         return None
 
+    # Пресметка на број на чекори (steps)
+    # Помалку чекори = побрзо генерирање на бесплатен сервер
+    num_steps = 20
 
-# Интерфејс (Gradio) со пурпурна тема
-with gr.Blocks(theme=gr.themes.Default(primary_hue="purple")) as demo:
-    gr.Markdown("# 🎵 LATIVM AI Audio Engine")
-    gr.Markdown("Внесете опис и почекајте моделот да се активира на GPU.")
+    # Генерирање
+    audio = pipe(
+        prompt,
+        num_inference_steps=num_steps,
+        audio_end_in_s=seconds
+    ).audios[0][0].numpy()
+
+    # Зачувување во привремен фајл
+    output_path = "generated_lativm.wav"
+    sampling_rate = pipe.vae.sampling_rate
+    scipy.io.wavfile.write(output_path, sampling_rate, audio)
+
+    return output_path
+
+
+# 3. Твојот препознатлив стил (UI)
+custom_css = """
+.gradio-container { background-color: white !important; }
+button.primary { 
+    background-color: #c305f7 !important; 
+    border: none !important; 
+    color: white !important;
+}
+button.primary:hover { background-color: #a104c9 !important; }
+#title { color: #c305f7; font-family: 'Arial'; text-align: center; font-weight: bold; }
+.description { text-align: center; color: #666; margin-bottom: 20px; }
+"""
+
+with gr.Blocks(css=custom_css, theme=gr.themes.Default()) as demo:
+    gr.Markdown("# 🎵 LATIVM AI Audio Engine", elem_id="title")
+    gr.Markdown("Креирај уникатни аудио примероци и лопови со помош на вештачка интелигенција.",
+                elem_classes="description")
 
     with gr.Row():
-        with gr.Column():
+        with gr.Column(scale=1):
             inp = gr.Textbox(
-                label="Промпт (на англиски)",
-                placeholder="Пример: Lo-fi hip hop beat, calm, 120 BPM, melodic loop"
+                label="Опис на звукот",
+                placeholder="На пр. Techno bassline, 128 BPM, high quality...",
+                lines=3
             )
-            sec = gr.Slider(minimum=5, maximum=30, value=15, step=1, label="Должина во секунди")
-            btn = gr.Button("Генерирај Аудио", variant="primary")
+            sec = gr.Slider(
+                minimum=5,
+                maximum=30,
+                value=15,
+                step=1,
+                label="Времетраење (секунди)"
+            )
+            btn = gr.Button("ГЕНЕРИРАЈ АУДИО", variant="primary")
 
-        with gr.Column():
-            out = gr.Audio(label="Резултат", type="filepath")
+        with gr.Column(scale=1):
+            out = gr.Audio(
+                label="LATIVM WAV Резултат",
+                type="filepath",
+                interactive=False
+            )
 
+    # Поврзување на функцијата
     btn.click(
         fn=generate_audio,
         inputs=[inp, sec],
-        outputs=out
+        outputs=out,
+        api_name="generate"
     )
 
-# Стартување на апликацијата
+    gr.HTML("<p style='text-align: center; margin-top: 20px;'>© 2026 LATIVM Project - Powered by Stable Audio</p>")
+
 if __name__ == "__main__":
     demo.launch()
