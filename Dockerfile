@@ -10,15 +10,15 @@ WORKDIR /app
 
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
-# 1. Прво инсталирај ги тешките работи (CPU верзии за да не пука меморијата)
+# 1. Инсталирај CPU верзии на torch
 RUN pip install --no-cache-dir torch torchaudio --index-url https://download.pytorch.org/whl/cpu
 
-# 2. Инсталирај ги останатите од requirements
+# 2. Инсталирај ги останатите
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 3. ФИНАЛЕН УДАР: Прегази го huggingface_hub со верзијата што работи со Gradio 4
-RUN pip install --no-cache-dir --force-reinstall huggingface_hub==0.23.2 gradio_client==0.17.0
+# 3. КРИТИЧНО: Верзии кои имаат handle_file, но сепак работат со старата hub библиотека
+RUN pip install --no-cache-dir --force-reinstall huggingface_hub==0.23.2 gradio_client==1.3.0
 
 COPY . .
 

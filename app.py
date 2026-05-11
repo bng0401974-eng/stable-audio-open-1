@@ -55,5 +55,5 @@ if __name__ == "__main__":
         server_name="0.0.0.0",
         server_port=7860,
         share=False,
-        show_api=False  # ОВА Е КЛУЧНО: Исклучува генерирање на API документација
+        show_api=False # Ова го спречува багот со 'bool' објектот
     )
