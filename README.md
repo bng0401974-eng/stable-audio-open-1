@@ -5,7 +5,7 @@ colorFrom: indigo
 colorTo: purple
 sdk: gradio
 sdk_version: 4.44.1
-python_version: 3.10.11  # ОВАА ЛИНИЈА Е КЛУЧНА
+python_version: 3.10.11
 app_file: app.py
 pinned: false
 ---
