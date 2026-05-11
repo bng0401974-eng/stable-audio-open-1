@@ -1,6 +1,5 @@
 FROM python:3.10-slim
 
-# Инсталирај системски аудио пакети
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     git \
@@ -8,12 +7,12 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Прво инсталирај ги библиотеките (за кеширање)
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-# Копирај го кодот
+# Прво го надградуваме pip и ги инсталираме специфичните верзии
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
 COPY . .
 
-# Стартувај ја апликацијата на порта 7860
 CMD ["python", "app.py"]
