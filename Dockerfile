@@ -24,3 +24,14 @@ COPY . .
 EXPOSE 7860
 
 CMD ["python", "app.py"]
+
+# ... претходниот дел од Dockerfile ...
+
+COPY requirements.txt .
+# Користиме --no-cache-dir за да заштедиме простор и ги инсталираме torch прво
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir torch torchaudio --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+# ... остатокот ...
