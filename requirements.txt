@@ -6,3 +6,7 @@ scipy
 numpy
 gradio
 spaces
+audioop-lts
+pydub
+
+# додај ги и специфичните за аудио (на пр. audiocraft, torch) ако ги користиш

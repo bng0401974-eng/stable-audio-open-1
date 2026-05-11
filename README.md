@@ -1,12 +1,11 @@
 ---
-title: LATIVM Audio Engine
+title: LATIVM AI Music Gen
 emoji: 🎵
-colorFrom: purple
-colorTo: indigo
+colorFrom: indigo
+colorTo: purple
 sdk: gradio
-sdk_version: 4.26.0
+sdk_version: 4.44.1
+python_version: 3.10.11  # ОВАА ЛИНИЈА Е КЛУЧНА
 app_file: app.py
 pinned: false
-runtime:
-  gpu: zero-a100
 ---

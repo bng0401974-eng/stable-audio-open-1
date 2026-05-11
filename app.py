@@ -4,6 +4,13 @@ import spaces
 from diffusers import StableAudioPipeline
 import scipy.io.wavfile as wavfile
 import numpy as np
+import sys
+try:
+    import audioop
+except ImportError:
+    import audioop_lts as audioop
+    sys.modules["audioop"] = audioop
+
 import gradio as gr
 
 # Глобална променлива за моделот
